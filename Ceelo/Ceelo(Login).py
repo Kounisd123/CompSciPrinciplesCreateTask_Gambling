@@ -11,6 +11,7 @@ uname = ''
 pword = ''
 uname_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/usernames.txt'
 pword_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/passwords.txt'
+creds_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/credits.txt'
 logged_in = False
 
 class Dice:
@@ -78,11 +79,17 @@ def login():
     global pword
     global uname_file
     global pword_file
+    global creds_file
     global logged_in
+    global credits
     uname = str(input("Enter your username: "))
     pword = str(input("Enter your password: "))
     current_unames = []
     current_pword = []
+    current_credits= []
+    with open(creds_file) as creds_database:
+        creds = creds_database.read()
+        current_creds = creds.split()
     with open(uname_file) as uname_database:
         users = uname_database.read()
         current_unames = users.split()
@@ -96,6 +103,11 @@ def login():
             print("You have successfully logged in as " + uname + ".")
             print("")
             logged_in = True
+            credits = int(current_creds[i]) + 100
+            print("")
+            print("Thanks for logging in, here's 100 credits on us!")
+            print("")
+            print("Your balance is:" + str(credits) + "credits.")
         else:
             print("")
             print("Access denied.")
@@ -110,6 +122,8 @@ def create_user():
     global pword
     global uname_file
     global pword_file
+    global creds_file
+    global credits
     print("")
     print("Create User")
     print("")
@@ -128,7 +142,9 @@ def create_user():
             uname_database.write(uname + "\n")
         with open(pword_file, 'a') as pword_database:
             pword_database.write(pword + "\n")
-        print("")
+        with open(creds_file, 'a') as creds_database:
+            creds_database.write(str(credits) + "\n")
+        print("\n")
         print("You successfully made the user: " + uname)
         print("")
 

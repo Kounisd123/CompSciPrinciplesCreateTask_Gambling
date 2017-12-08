@@ -103,7 +103,7 @@ def login():
             print("You have successfully logged in as " + uname + ".")
             print("")
             logged_in = True
-            credits == int(current_creds[i]) + 100
+            credits = int(current_creds[i]) + 100
             print("")
             print("Thanks for logging in, here's 100 credits on us!")
             print("")
