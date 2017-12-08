@@ -75,11 +75,15 @@ def login_phase():
         lchoice = str(input("(c)reate user\n(l)ogin\n---------------\n").lower())
         if lchoice == "c"
             create_user()
-        elif lchoice = "l"
+        elif lchoice == "l"
             login()
         else
             print("Sorry that isn't one of the choices. Please try again.")
             login_phase()
+
+def create_user():
+
+def login():
 
 def betting_phase():
     global credits
