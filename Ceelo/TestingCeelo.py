@@ -9,9 +9,6 @@ credits = 1000
 bet = 0
 username = ''
 password = ''
-uname = ['shortchemstud', 'rndk_g', 'pchard']
-pword = ['010217', '#bipride', 'I_am_a_terrible_human_being']
-creds = [1000000, 5000, 500]
 
 class Dice:
     def __init__(self,max_pips):
@@ -73,36 +70,16 @@ class Dice:
     def standard_rolls_for_debugging(self):
         random.seed(5121022)
 
-import hashlib, os
-resource_file = "passwords.txt"
-def add_user(username,password):
-    if os.path.exists(resource_file):
-        with open(resource_file) as f:
-            if "$%s::"%username in f.read():
-                raise Exception("User already exists.")
-    with open(resource_file,"w") as f:
-        print(f, username,password)
-        print(username)
-
-def check_login(username,password):
-    with open(resource_file) as f:
-        if (username,password) in f.read():
-           print(username)
-
-def create_username():
-     try:
-         username = add_user(input("Enter username:"),input("Enter password:"))
-         print("Added User!")
-     except Exception as e:
-         print("Failed to add user! ... user already exists??")
-def login():
-     if check_login(input("enter username:"), input("enter password:")):
-        print("Login success!!")
-     else:
-        print("There was a problem logging in")
-
 def login_phase():
-    {'c':create_username,'l':login}.get(input("(c)reate user\n(l)ogin\n------------\n>").lower(),login)()
+    while lchoice == '':
+        lchoice = str(input("(c)reate user\n(l)ogin\n---------------\n").lower())
+        if lchoice == "c"
+            create_user()
+        elif lchoice = "l"
+            login()
+        else
+            print("Sorry that isn't one of the choices. Please try again.")
+            login_phase()
 
 def betting_phase():
     global credits
