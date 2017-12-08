@@ -7,8 +7,7 @@ pstrength = 2
 cstrength = 2
 credits = 1000
 bet = 0
-username = ''
-password = ''
+
 
 class Dice:
     def __init__(self,max_pips):
@@ -70,20 +69,24 @@ class Dice:
     def standard_rolls_for_debugging(self):
         random.seed(5121022)
 
-def login_phase():
-    while lchoice == '':
-        lchoice = str(input("(c)reate user\n(l)ogin\n---------------\n").lower())
-        if lchoice == "c"
-            create_user()
-        elif lchoice == "l"
-            login()
-        else
-            print("Sorry that isn't one of the choices. Please try again.")
-            login_phase()
-
-def create_user():
-
-def login():
+class Player:
+    def logon(self):
+        global uname
+        global pword
+        global creds
+        global credits
+        uname_input = str(input("Please enter your username."))
+        print("")
+        pword_input = str(input("Please enter your password."))
+        print("")
+        if uname_input in uname and pword_input in pword:
+            print("Access granted.")
+            global credits
+            user_index = uname.index(uname_input)
+            credits = creds[user_index]
+            print("You have " + str(credits) + " credits.")
+        else:
+            print("Access denied.")
 
 def betting_phase():
     global credits
@@ -247,7 +250,6 @@ def game():
         play_again()
 
 def main():
-    login_phase()
     betting_phase()
     game()
 

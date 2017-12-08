@@ -1,0 +1,1 @@
+To be able to make login and create user work in Ceelo(Login).py you must go to line 12 and 13 and change the directory to where you stored those files.

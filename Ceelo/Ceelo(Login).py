@@ -7,10 +7,11 @@ pstrength = 2
 cstrength = 2
 credits = 1000
 bet = 0
-
-uname = ['shortchemstud', 'rndk_g', 'pchard']
-pword = ['010217', '#bipride', 'I_am_a_terrible_human_being']
-creds = [1000000, 5000, 500]
+uname = ''
+pword = ''
+uname_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/usernames.txt'
+pword_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/passwords.txt'
+logged_in = False
 
 class Dice:
     def __init__(self,max_pips):
@@ -72,29 +73,77 @@ class Dice:
     def standard_rolls_for_debugging(self):
         random.seed(5121022)
 
-class Player:
-    def logon(self):
-        global uname
-        global pword
-        global creds
-        global credits
-        uname_input = str(input("Please enter your username."))
-        print("")
-        pword_input = str(input("Please enter your password."))
-        print("")
-        if uname_input in uname and pword_input in pword:
-            print("Access granted.")
-            global credits
-            user_index = uname.index(uname_input)
-            credits = creds[user_index]
-            print("You have " + str(credits) + " credits.")
+def login():
+    global uname
+    global pword
+    global uname_file
+    global pword_file
+    global logged_in
+    uname = str(input("Enter your username: "))
+    pword = str(input("Enter your password: "))
+    current_unames = []
+    current_pword = []
+    with open(uname_file) as uname_database:
+        users = uname_database.read()
+        current_unames = users.split()
+    with open(pword_file) as pword_database:
+        pwords = pword_database.read()
+        current_pword = pwords.split()
+    if uname in current_unames:
+        i = current_unames.index(uname)
+        if pword == current_pword[i]:
+            print("")
+            print("You have successfully logged in as " + uname + ".")
+            print("")
+            logged_in = True
         else:
+            print("")
             print("Access denied.")
+            print("")
+    else:
+        print("")
+        print("Access denied.")
+        print("")
+
+def create_user():
+    global uname
+    global pword
+    global uname_file
+    global pword_file
+    print("")
+    print("Create User")
+    print("")
+    uname = str(input("Enter new username: "))
+    pword = str(input("Enter new password: "))
+    current_unames = []
+    with open(uname_file) as uname_database:
+        users = uname_database.read()
+        current_unames = users.split()
+    if uname in current_unames:
+        print("")
+        print('That user already exists!')
+        print("")
+    else:
+        with open(uname_file, 'a') as uname_database:
+            uname_database.write(uname + "\n")
+        with open(pword_file, 'a') as pword_database:
+            pword_database.write(pword + "\n")
+        print("")
+        print("You successfully made the user: " + uname)
+        print("")
 
 def login_phase():
-    global p
-    p = Player()
-    p.logon()
+    global logged_in
+    while logged_in == False:
+            lchoice = str(input("(c)reate user\n(l)ogin\n---------------\n").lower())
+            if lchoice == "c":
+                create_user()
+            elif lchoice == "l":
+                login()
+            else:
+                print("")
+                print("I don't understand.")
+                print("")
 
 def betting_phase():
     global credits
@@ -104,17 +153,20 @@ def betting_phase():
         bet = int(input("How much would you like to bet?"))
         print("")
         time.sleep(0.75)
-        if credits >= bet:
+        if credits < bet:
+            print("You can't bet more credits than you have!")
+            print("")
+        if bet < 0:
+            print("You must enter a positive number.")
+            print("")
+        if credits >= bet and bet > 0:
             credits = credits - bet
+            if bet == 0:
+                print("We will just play for fun then.")
+                print("")
             print("You have " + str(credits) + " credits remaining.")
             print("")
             bet_placed = 1
-        elif credits < bet:
-            print("You can't bet more credits than you have!")
-            print("")
-        else:
-            print("I don't understand...")
-            print("")
 
 def prolling_phase():
     global pstrength
