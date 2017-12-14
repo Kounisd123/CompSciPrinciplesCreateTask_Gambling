@@ -1,1 +1,3 @@
-rndk_g
+rndk
+shortchemstud
+pchard

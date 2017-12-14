@@ -1,18 +1,19 @@
 import random
 import time
 
-
 quit = 0
 pstrength = 2
 cstrength = 2
-credits = 1000
+credits = 0
 bet = 0
 uname = ''
 pword = ''
 uname_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/usernames.txt'
 pword_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/passwords.txt'
-creds_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/credits.txt'
+credits_file = '/Users/dimitrioskounis/Desktop/CompSciCreateTask/CompSciPrinciplesCreateTask_Gambling/Ceelo/credits.txt'
 logged_in = False
+i = 0
+starting_credits = 0
 
 class Dice:
     def __init__(self,max_pips):
@@ -24,90 +25,75 @@ class Dice:
         self._pips      = [0]*len(max_pips)
         self._roll_count = 0
 
-
     def roll(self):
         self._roll_count += 1
         self._pips = [ random.randint(1,max_pips) for max_pips in self._max_pips ]
         return self
 
-
-    def number_of_dice(self):
-        return len(self._pips)
-
-
-    def all_pip_maximums(self):
-        return self._max_pips[:]
-
-
     def rolls(self):
         return self._roll_count
 
-
-    def pips_on(self,i):
-        assert self._roll_count > 0, 'Dice.pips_on: dice not rolled'
-        assert 0<= i < len(self._pips), \
-          'Dice.pips: die index i('+str(i)+') must be >= 0 and <'+str(len(self._pips))
-        return self._pips[i]
-
-
     def all_pips(self):
         return self._pips[:]
-
 
     def pip_sum(self):
         assert self._roll_count > 0, 'Dice.pip_sum: dice not rolled'
         return sum(self._pips)
 
-
-    def pips_same(self):
-        return all( [self._pips[0] == p for p in self._pips] )
-
-
-    def __str__(self):
-        return 'Dice('+str(self._pips)+')'
-
-
-    def __repr__(self):
-        return 'Dice('+str(self._max_pips)+')'
-
-
-    def standard_rolls_for_debugging(self):
-        random.seed(5121022)
+def cash_out(path, value):
+    global i
+    with open(path, 'r') as file:
+        saved_credits = file.read().split('\n')
+        saved_credits[i] = value
+    with open(path, 'w') as file:
+        for balance in saved_credits:
+            if balance == "":
+                break
+            else:
+                file.write(str(balance) + "\n")
 
 def login():
     global uname
     global pword
+    global credits_file
     global uname_file
     global pword_file
-    global creds_file
     global logged_in
     global credits
-    uname = str(input("Enter your username: "))
+    global i
+    global starting_credits
+    uname = str(input("Enter your username: ").lower())
     pword = str(input("Enter your password: "))
+    print("")
     current_unames = []
     current_pword = []
-    current_credits= []
-    with open(creds_file) as creds_database:
-        creds = creds_database.read()
-        current_creds = creds.split()
+    saved_credits = []
     with open(uname_file) as uname_database:
         users = uname_database.read()
         current_unames = users.split()
     with open(pword_file) as pword_database:
         pwords = pword_database.read()
         current_pword = pwords.split()
+    with open(credits_file) as credits_database:
+        creds = credits_database.read()
+        saved_credits = creds.split()
     if uname in current_unames:
         i = current_unames.index(uname)
         if pword == current_pword[i]:
+            credits = int(saved_credits[i])
+            starting_credits = credits
             print("")
             print("You have successfully logged in as " + uname + ".")
             print("")
+            time.sleep(1)
+            credits = credits + 100
+            print("")
+            print("Here's 100 free credits on us! Thanks for coming back!")
+            print("")
+            time.sleep(1)
+            print("You have " + str(credits) + " credits remaining.")
+            print("")
             logged_in = True
-            credits = int(current_creds[i]) + 100
-            print("")
-            print("Thanks for logging in, here's 100 credits on us!")
-            print("")
-            print("Your balance is:" + str(credits) + "credits.")
         else:
             print("")
             print("Access denied.")
@@ -122,19 +108,18 @@ def create_user():
     global pword
     global uname_file
     global pword_file
-    global creds_file
-    global credits
+    global credits_fileo
     print("")
     print("Create User")
     print("")
-    uname = str(input("Enter new username: "))
+    uname = str(input("Enter new username: ").lower())
     pword = str(input("Enter new password: "))
+    print("")
     current_unames = []
     with open(uname_file) as uname_database:
         users = uname_database.read()
         current_unames = users.split()
     if uname in current_unames:
-        print("")
         print('That user already exists!')
         print("")
     else:
@@ -142,31 +127,29 @@ def create_user():
             uname_database.write(uname + "\n")
         with open(pword_file, 'a') as pword_database:
             pword_database.write(pword + "\n")
-        with open(creds_file, 'a') as creds_database:
-            creds_database.write(str(credits) + "\n")
-        print("\n")
+        with open(credits_file, 'a') as credits_database:
+            credits_database.write("1000\n")
         print("You successfully made the user: " + uname)
-        print("")
 
 def login_phase():
     global logged_in
     while logged_in == False:
-            lchoice = str(input("(c)reate user\n(l)ogin\n---------------\n").lower())
-            if lchoice == "c":
-                create_user()
-            elif lchoice == "l":
+        print("")
+        lchoice = str(input("(c)reate new user\n(l)ogin as existing user\n------------------------\n").lower())
+        if lchoice == "c":
+            create_user()
+        elif lchoice == "l":
                 login()
-            else:
-                print("")
-                print("I don't understand.")
-                print("")
+        else:
+            print("")
+            print("I don't understand.")
 
 def betting_phase():
     global credits
     global bet
     bet_placed = 0
     while bet_placed == 0:
-        bet = int(input("How much would you like to bet?"))
+        bet = int(input("How much would you like to bet?\n"))
         print("")
         time.sleep(0.75)
         if credits < bet:
@@ -177,9 +160,12 @@ def betting_phase():
             print("")
         if credits >= bet and bet > 0:
             credits = credits - bet
-            if bet == 0:
-                print("We will just play for fun then.")
-                print("")
+            print("You have " + str(credits) + " credits remaining.")
+            print("")
+            bet_placed = 1
+        if bet == 0:
+            print("We will just play for fun then.")
+            print("")
             print("You have " + str(credits) + " credits remaining.")
             print("")
             bet_placed = 1
@@ -189,6 +175,7 @@ def prolling_phase():
     pstrength = 2
     r = 0
     while r < 5 and pstrength == 2:
+        input("Press [Enter] to roll the dice!\n")
         d.roll()
         r = r + 1
         play = d.all_pips()
@@ -297,9 +284,11 @@ def play_again():
     print("")
     time.sleep(0.75)
     while quit != 1 and quit != 2 :
+        print ("Notice: Exiting instead of typing N will result in your credits not being saved.")
         again = str(input("Would you like to play again? [Y/N]"))
         print("")
         if again == 'N' or again == 'n':
+            cash_out(credits_file, credits)
             quit = 1
             break
         elif again == 'Y' or again == 'y':
@@ -330,4 +319,55 @@ def main():
     betting_phase()
     game()
 
+print("Welcome to Ceelo!")
+instructions = str(input("To see instructions on how to play please press [I]. Otherwise, press [Enter].\n"))
+while instructions == 'I' or instructions == 'i':
+    print("")
+    print("Ceelo is a game played with 3 dice.")
+    time.sleep(1)
+    print("You get 5 rolls to score and once you score your turn ends.")
+    time.sleep(1)
+    print("In order to score, you must roll doubles, triples, [1, 2, 3], or [4, 5, 6]")
+    time.sleep(1)
+    print("[1, 2, 3] results in an automatic loss and [4, 5, 6] results in an automatic win.")
+    time.sleep(1)
+    print("If you roll doubles, your score is the leftover number.")
+    time.sleep(1)
+    print("Triples beats doubles, and higher triples beats a lower triple.")
+    time.sleep(1)
+    print("|---------------------|")
+    print("|    Scoring Table    |")
+    print("|---------------------|")
+    print("| 1, 2, 3 |   Lose    |")
+    print("|---------|-----------|")
+    print("| x, y, z | No Score  |")
+    print("|---------|-----------|")
+    print("| x, x, 1 |     1     |")
+    print("|---------|-----------|")
+    print("| x, x, 2 |     2     |")
+    print("|---------|-----------|")
+    print("| x, x, 3 |     3     |")
+    print("|---------|-----------|")
+    print("| x, x, 4 |     4     |")
+    print("|---------|-----------|")
+    print("| x, x, 5 |     5     |")
+    print("|---------|-----------|")
+    print("| x, x, 6 |     6     |")
+    print("|---------|-----------|")
+    print("| 1, 1, 1 |     7     |")
+    print("|---------|-----------|")
+    print("| 2, 2, 2 |     8     |")
+    print("|---------|-----------|")
+    print("| 3, 3, 3 |     9     |")
+    print("|---------|-----------|")
+    print("| 4, 4, 4 |    10     |")
+    print("|---------|-----------|")
+    print("| 5, 5, 5 |    11     |")
+    print("|---------|-----------|")
+    print("| 6, 6, 6 |    12     |")
+    print("|---------|-----------|")
+    print("| 4, 5, 6 |    Win    |")
+    print("|---------------------|")
+    time.sleep(1)
+    instructions = str(input("To see these instructions again, press [I]. To continue, press [Enter]."))
 main()
