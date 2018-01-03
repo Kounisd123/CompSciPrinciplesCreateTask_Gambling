@@ -15,6 +15,7 @@ logged_in = False
 i = 0
 starting_credits = 0
 
+#By Jay
 class Dice:
     def __init__(self,max_pips):
         assert len(max_pips) >= 1, 'Dice.__init__: max_pips is empty'
@@ -26,7 +27,7 @@ class Dice:
         self._roll_count = 0
 
     def roll(self):
-        self._roll_count += 1
+        self._roll_count
         self._pips = [ random.randint(1,max_pips) for max_pips in self._max_pips ]
         return self
 
@@ -37,9 +38,9 @@ class Dice:
         return self._pips[:]
 
     def pip_sum(self):
-        assert self._roll_count > 0, 'Dice.pip_sum: dice not rolled'
         return sum(self._pips)
 
+#By Dimitri
 def cash_out(path, value):
     global i
     with open(path, 'r') as file:
@@ -47,11 +48,10 @@ def cash_out(path, value):
         saved_credits[i] = value
     with open(path, 'w') as file:
         for balance in saved_credits:
-            if balance == "":
-                break
-            else:
+            if balance != "":
                 file.write(str(balance) + "\n")
 
+#By Dimitri
 def login():
     global uname
     global pword
@@ -86,10 +86,9 @@ def login():
             print("You have successfully logged in as " + uname + ".")
             print("")
             time.sleep(1)
+            print("Here are 100 credits for logging in!")
+            print("")
             credits = credits + 100
-            print("")
-            print("Here's 100 free credits on us! Thanks for coming back!")
-            print("")
             time.sleep(1)
             print("You have " + str(credits) + " credits remaining.")
             print("")
@@ -103,12 +102,13 @@ def login():
         print("Access denied.")
         print("")
 
+#ByDimitiri
 def create_user():
     global uname
     global pword
     global uname_file
     global pword_file
-    global credits_fileo
+    global credits_file
     print("")
     print("Create User")
     print("")
@@ -131,6 +131,7 @@ def create_user():
             credits_database.write("1000\n")
         print("You successfully made the user: " + uname)
 
+#By both Dimitri and Jay
 def login_phase():
     global logged_in
     while logged_in == False:
@@ -144,6 +145,7 @@ def login_phase():
             print("")
             print("I don't understand.")
 
+#By Jay
 def betting_phase():
     global credits
     global bet
@@ -160,16 +162,14 @@ def betting_phase():
             print("")
         if credits >= bet and bet > 0:
             credits = credits - bet
-            print("You have " + str(credits) + " credits remaining.")
-            print("")
-            bet_placed = 1
-        if bet == 0:
-            print("We will just play for fun then.")
-            print("")
+            if bet == 0:
+                print("We will just play for fun then.")
+                print("")
             print("You have " + str(credits) + " credits remaining.")
             print("")
             bet_placed = 1
 
+#By Jay
 def prolling_phase():
     global pstrength
     pstrength = 2
@@ -179,9 +179,9 @@ def prolling_phase():
         d.roll()
         r = r + 1
         play = d.all_pips()
-        time.sleep(0.75)
+        time.sleep(0.25)
         print(play)
-        time.sleep(0.75)
+        time.sleep(0.25)
         print("")
         play.sort()
         pstrength = 2
@@ -211,8 +211,9 @@ def prolling_phase():
         if pstrength == 2 and r >= 5:
             print("Ouch! You rolled out!")
         print("")
-        time.sleep(0.75)
+        time.sleep(0.25)
 
+#By Dimtiri
 def crolling_phase():
     global cstrength
     cstrength = 2
@@ -255,6 +256,7 @@ def crolling_phase():
         print("")
         time.sleep(.75)
 
+#By Jay
 def play_again():
     global quit
     global pstrength
@@ -284,7 +286,10 @@ def play_again():
     print("")
     time.sleep(0.75)
     while quit != 1 and quit != 2 :
-        print ("Notice: Exiting instead of typing N will result in your credits not being saved.")
+
+
+
+        print ("Exiting the program without typing N will lose your progress.")
         again = str(input("Would you like to play again? [Y/N]"))
         print("")
         if again == 'N' or again == 'n':
@@ -299,6 +304,7 @@ def play_again():
             print("Sorry but I don't understand. Please use [Y] for yes and [N] for no.")
             print("")
 
+#By both Dimtitri and Jay
 def game():
     global pstrength
     global cstrength
@@ -309,16 +315,19 @@ def game():
         print("")
         prolling_phase()
         if pstrength != 1 and pstrength != 15:
+            time.sleep(0.5)
             print("My turn!")
             print("")
             crolling_phase()
         play_again()
 
+#By Jay
 def main():
     login_phase()
     betting_phase()
     game()
 
+#By Jay
 print("Welcome to Ceelo!")
 instructions = str(input("To see instructions on how to play please press [I]. Otherwise, press [Enter].\n"))
 while instructions == 'I' or instructions == 'i':
